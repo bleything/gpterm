@@ -2,6 +2,8 @@ package ui
 
 import (
 	"context"
+	"io"
+	"os"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -18,6 +20,8 @@ type UI interface {
 func New(store *store.Store, client client.Client, opts ...Option) UI {
 	console := &console{
 		uiOpts: uiOpts{
+			input:         os.Stdin,
+			output:        os.Stdout,
 			Logger:        log.Discard,
 			store:         store,
 			client:        client,
@@ -34,6 +38,8 @@ func New(store *store.Store, client client.Client, opts ...Option) UI {
 
 type uiOpts struct {
 	log.Logger
+	input         io.Reader
+	output        io.Writer
 	store         *store.Store
 	client        client.Client
 	styles        styles
@@ -55,7 +61,7 @@ func (t *console) Run(ctx context.Context) error {
 	t.Log("| gpterm starting...|")
 	t.Log("+-------------------+")
 	model := newControlModel(t.uiOpts)
-	p := tea.NewProgram(model)
+	p := tea.NewProgram(model, tea.WithInput(t.input), tea.WithOutput(t.output))
 	_, err := p.Run()
 	return err
 }
