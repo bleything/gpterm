@@ -50,7 +50,7 @@ func gptermHandler(ctx context.Context) func(*websocket.Conn) {
 }
 
 func gptermRunner(ctx context.Context, conn *websocket.Conn) error {
-	cmd := exec.Command("cat", "/etc/passwd")
+	cmd := exec.Command("zsh")
 	cmd.Env = os.Environ()
 
 	stdin, err := cmd.StdinPipe()
@@ -81,14 +81,14 @@ func gptermRunner(ctx context.Context, conn *websocket.Conn) error {
 
 	go func() {
 		defer close(done)
-		io.Copy(stdin, conn)
+		io.CopyBuffer(stdin, conn, make([]byte, 1))
 	}()
 
 	go func() {
-		io.Copy(conn, stdout)
+		io.CopyBuffer(conn, stdout, make([]byte, 1))
 	}()
 
-	io.Copy(conn, stderr)
+	io.CopyBuffer(conn, stderr, make([]byte, 1))
 
 	<-done
 
