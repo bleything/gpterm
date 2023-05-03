@@ -78,6 +78,7 @@ func init() {
 	root.Flags().IntVarP(&clientHistory, "context-size", "c", 5, "number of messages to send as context")
 
 	root.AddCommand(cmd.Auth())
+	root.AddCommand(cmd.Ngrok())
 	root.AddCommand(cmd.Deps())
 	root.AddCommand(cmd.Usage())
 	root.AddCommand(db.DB(cmd.Deps()))
