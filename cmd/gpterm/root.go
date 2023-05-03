@@ -12,6 +12,7 @@ import (
 	"github.com/collinvandyck/gpterm/cmd/gpterm/cmd"
 	"github.com/collinvandyck/gpterm/cmd/gpterm/cmd/db"
 	"github.com/collinvandyck/gpterm/cmd/gpterm/cmd/exp"
+	"github.com/collinvandyck/gpterm/cmd/gpterm/cmd/ngrok"
 	"github.com/collinvandyck/gpterm/lib/client"
 	"github.com/collinvandyck/gpterm/lib/log"
 	"github.com/collinvandyck/gpterm/lib/store"
@@ -78,7 +79,7 @@ func init() {
 	root.Flags().IntVarP(&clientHistory, "context-size", "c", 5, "number of messages to send as context")
 
 	root.AddCommand(cmd.Auth())
-	root.AddCommand(cmd.Ngrok())
+	root.AddCommand(ngrok.Ngrok())
 	root.AddCommand(cmd.Deps())
 	root.AddCommand(cmd.Usage())
 	root.AddCommand(db.DB(cmd.Deps()))
