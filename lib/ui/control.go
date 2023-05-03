@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 	"time"
 
@@ -18,6 +17,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/collinvandyck/gpterm/db/query"
 	"github.com/collinvandyck/gpterm/lib/markdown"
+	"github.com/collinvandyck/gpterm/lib/open"
 	"github.com/collinvandyck/gpterm/lib/store"
 	"github.com/collinvandyck/gpterm/lib/ui/gptea"
 	"github.com/google/go-github/v39/github"
@@ -324,16 +324,7 @@ func (m controlModel) gist() tea.Msg {
 	res := gptea.GistResultMsg{URL: *gist.HTMLURL}
 	m.Log("Got gist", "url", res.URL)
 	var ec *exec.Cmd
-	switch os := runtime.GOOS; os {
-	case "darwin":
-		m.Log("Invoking open")
-		ec = exec.Command("/usr/bin/open", *gist.HTMLURL)
-	case "linux":
-		m.Log("Invoking xdg-open")
-		ec = exec.Command("xdg-open", *gist.HTMLURL)
-	default:
-		m.Log("Unknown OS")
-	}
+	ec = open.Browser(*gist.HTMLURL)
 	if ec != nil {
 		eco, err := ec.CombinedOutput()
 		m.Log("Open result", "err", err, "output", string(eco))

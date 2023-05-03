@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"embed"
 	"fmt"
+	"net/http"
 
 	"github.com/spf13/cobra"
 	"golang.ngrok.com/ngrok"
@@ -24,9 +26,15 @@ func Ngrok() *cobra.Command {
 				return err
 			}
 
-			fmt.Println(tun.URL())
-
-			return nil
+			fmt.Println("Serving on", tun.URL())
+			return http.Serve(tun, http.HandlerFunc(handler))
 		},
 	}
+}
+
+//go:embed ../../../../html/*
+var preambles embed.FS
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Hello from ngrok-go!")
 }
